@@ -88,16 +88,6 @@ Apache 2.0. See `LICENSE`.
 
 <<<<<<< HEAD
 
-
-
-## Observed weakness in V1
-
-## Design decision for V2
-
-## Effect of the change
-
-## Trade-offs
-=======
 ## Observed weakness in V1: what failed and why
 
 ## Design decision for V2: what Rule 4 is and why you chose it
