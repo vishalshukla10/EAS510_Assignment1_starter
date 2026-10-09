@@ -85,3 +85,14 @@ restart never touches GitHub.
 ## License
 
 Apache 2.0. See `LICENSE`.
+
+
+
+
+### Observed weakness in V1
+
+### Design decision for V2
+
+### Effect of the change
+
+###Trade-offs
