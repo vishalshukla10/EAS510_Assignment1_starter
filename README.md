@@ -86,6 +86,7 @@ restart never touches GitHub.
 
 Apache 2.0. See `LICENSE`.
 
+<<<<<<< HEAD
 
 
 
@@ -96,3 +97,13 @@ Apache 2.0. See `LICENSE`.
 ## Effect of the change
 
 ## Trade-offs
+=======
+## Observed weakness in V1: what failed and why
+
+## Design decision for V2: what Rule 4 is and why you chose it
+
+## Effect of the change: accuracy before/after on easy vs hard
+
+## Trade-offs: what new costs or risks did Rule 4 introduce
+
+>>>>>>> e56225c (Add phase 2 reflection to README)

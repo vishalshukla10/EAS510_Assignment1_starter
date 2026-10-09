@@ -16,6 +16,31 @@ import rules
 #: Import the original rules and append your new one.
 RULES = rules.RULES + ("rule4_edges",)
 
+def _reweight(rule_function, target, input_path, maximum):
+    # Copy the result so the original rule output is not modified
+    evidence = dict(rule_function(target, input_path))
+
+    old_maximum = evidence["out_of"]
+    evidence["score"]= int(
+	round(evidence["score"] * maximum / old_maximum )
+    )
+    evidence["out_of"]= maximum
+    return evidence
+
+def rule1_metadata_v2(target, input_path):
+    return _reweight(
+	rules.rule1_metadata, target, input_path, 25
+    )
+
+def rule2_histogram_v2(target, input_path):
+    return _reweight(
+        rules.rule2_histogram, target, input_path, 25
+    )
+
+def rule3_template_v2(target, input_path):
+    return _reweight(
+        rules.rule3_template, target, input_path, 40
+    )
 
 def rule4_edges(target, input_path):
     """TODO: replace with your Phase 2 rule that fixes the V1 weakness.
@@ -32,3 +57,10 @@ def rule4_edges(target, input_path):
         "note": "Not implemented",
         "metric": 0.0,
     }
+
+RULES = [
+    "rule1_metadata_v2",
+    "rule2_histogram_v2",
+    "rule3_template_v2",
+    "rule4_edges"
+]
