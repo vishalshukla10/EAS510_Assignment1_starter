@@ -86,7 +86,6 @@ restart never touches GitHub.
 
 Apache 2.0. See `LICENSE`.
 
-<<<<<<< HEAD
 
 ## Observed weakness in V1: what failed and why
 
@@ -96,4 +95,3 @@ Apache 2.0. See `LICENSE`.
 
 ## Trade-offs: what new costs or risks did Rule 4 introduce
 
->>>>>>> e56225c (Add phase 2 reflection to README)
