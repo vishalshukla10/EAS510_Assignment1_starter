@@ -90,7 +90,7 @@ def rule1_metadata(target, input_path):
         metric = 0.5 * size_ratio + 0.5 * min(1.0, area_kept)
         out["metric"] = round(max(0.0, min(1.0, metric)), 3)
         out["note"] = f"Size ratio {out['metric']:.2f}"
-        if out["metric"] >= 0.6:
+        if out["metric"] >= 0.55:
             out["fired"] = True
             out["score"] = int(round(out["out_of"] * out["metric"]))
     except Exception:
@@ -138,7 +138,7 @@ def rule3_template(target, input_path):
         metric = float(res.max())
         out["metric"] = round(max(0.0, min(1.0, metric)), 3)
         out["note"] = f"Match score {out['metric']:.2f}"
-        if out["metric"] >= 0.4:
+        if out["metric"] >= 0.2:
             out["fired"] = True
             out["score"] = int(round(out["out_of"] * out["metric"]))
     except Exception:
