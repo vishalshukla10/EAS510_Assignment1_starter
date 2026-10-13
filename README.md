@@ -89,7 +89,13 @@ Apache 2.0. See `LICENSE`.
 
 ## Observed weakness in V1: what failed and why
 
+I changed the metadata trigger and template trigger to 0.55 and 0.20 respectively. As it allowed weaker evidence to contribute points but on the other hand the problem remained the same. They didn't fix the problem of comparing cropped images at different scales. 
+In few cases, One of the rule showed strong evidence of the matched image but was discarded cause it wasn't picked up by other rules. The insufficient support from other rules caused it to fail. 
+
+
 ## Design decision for V2: what Rule 4 is and why you chose it
+
+
 
 ## Effect of the change: accuracy before/after on easy vs hard
 
