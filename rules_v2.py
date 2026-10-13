@@ -43,24 +43,40 @@ def rule3_template_v2(target, input_path):
     )
 
 def rule4_edges(target, input_path):
-    """TODO: replace with your Phase 2 rule that fixes the V1 weakness.
+                best_template, best_location = template, location
 
-    Starter returns a no-op so the pipeline still runs before you implement it.
-    Parity with rules.py rule dict: rule/name/fired/score/out_of/note/metric.
-    """
-    return {
-        "rule": 4,
-        "name": "Edges",
-        "fired": False,
-        "score": 0,
-        "out_of": 10,
-        "note": "Not implemented",
-        "metric": 0.0,
-    }
+    out["metric"] = round(best, 3)
+    edge_metric = 0.0
+    if out["metric"] >= 0.8 and best_template is not None:
+        x, y = best_location
+        th, tw = best_template.shape
+        patch_edges = cv2.Canny(src[y:y + th, x:x + tw], 50, 150)
+        template_edges = cv2.Canny(best_template, 50, 150)
+        # Empty or nearly empty edge maps are not positive matching evidence.
+        if min(cv2.countNonZero(patch_edges), cv2.countNonZero(template_edges)) >= 20:
+            # Allow small edge displacements caused by resizing and JPEG noise.
+            patch_edges = cv2.GaussianBlur(patch_edges, (5, 5), 0)
+            template_edges = cv2.GaussianBlur(template_edges, (5, 5), 0)
+            edge_response = cv2.matchTemplate(
+                patch_edges, template_edges, cv2.TM_CCOEFF_NORMED
+            )
+            value = float(edge_response[0, 0])
+            if np.isfinite(value):
+                edge_metric = round(max(0.0, min(1.0, value)), 3)
+
+    out["note"] = (
+        f"Multiscale correlation {out['metric']:.2f}; "
+        f"edge correlation {edge_metric:.2f}; scale {best_scale:.2f}"
+    )
+    if out["metric"] >= 0.8 and edge_metric >= 0.3:
+        out["fired"] = True
+        out["score"] = int(round(out["out_of"] * out["metric"]))
+    return out
+
 
 RULES = [
     "rule1_metadata_v2",
     "rule2_histogram_v2",
     "rule3_template_v2",
-    "rule4_edges"
+    "rule4_edges",
 ]
