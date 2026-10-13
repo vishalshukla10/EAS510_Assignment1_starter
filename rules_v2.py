@@ -1,49 +1,59 @@
-"""EAS 510 - Project 1 - Phase 2: the V2 rule set.
 
-Rules 1-3 are kept exactly as in `rules.py`. Your job is to ADD Rule 4 that
-targets the systematic weakness you diagnosed from results_v1_hard.txt.
-
-Constraint: the rules' `out_of` weights must still sum to 100 so the Final
-Score stays on a /100 scale (the format validator enforces "Final Score:
-<s>/100" equals the sum of the block's rule scores).
-
-Example split that keeps the original spirit: Rules 1-3 -> 25/25/40 and
-Rule 4 -> 10 (or trim the losers more aggressively).
-"""
-
+import cv2
+import numpy as np
 import rules
 
-#: Import the original rules and append your new one.
-RULES = rules.RULES + ("rule4_edges",)
 
 def _reweight(rule_function, target, input_path, maximum):
-    # Copy the result so the original rule output is not modified
     evidence = dict(rule_function(target, input_path))
-
     old_maximum = evidence["out_of"]
-    evidence["score"]= int(
-	round(evidence["score"] * maximum / old_maximum )
-    )
-    evidence["out_of"]= maximum
+    evidence["score"] = int(round(evidence["score"] * maximum / old_maximum))
+    evidence["out_of"] = maximum
     return evidence
 
+
 def rule1_metadata_v2(target, input_path):
-    return _reweight(
-	rules.rule1_metadata, target, input_path, 25
-    )
+    return _reweight(rules.rule1_metadata, target, input_path, 15)
+
 
 def rule2_histogram_v2(target, input_path):
-    return _reweight(
-        rules.rule2_histogram, target, input_path, 25
-    )
+    return _reweight(rules.rule2_histogram, target, input_path, 30)
+
 
 def rule3_template_v2(target, input_path):
-    return _reweight(
-        rules.rule3_template, target, input_path, 40
-    )
+    return _reweight(rules.rule3_template, target, input_path, 25)
+
 
 def rule4_edges(target, input_path):
-                best_template, best_location = template, location
+    
+    out = {
+        "rule": 4, "name": "Edges", "fired": False, "score": 0,
+        "out_of": 30, "note": "Multiscale correlation 0.00; edge correlation 0.00",
+        "metric": 0.0,
+    }
+    src = rules._gray(target["path"])
+    suspect = rules._gray(input_path)
+    if src is None or suspect is None:
+        return out
+
+    best, best_scale = 0.0, 0.0
+    best_template, best_location = None, None
+    h, w = suspect.shape
+
+    # Test 20%-100% of the cached suspect size, preserving its aspect ratio.
+    for percent in range(20, 101, 2):
+        scale = percent / 100.0
+        tw, th = int(round(w * scale)), int(round(h * scale))
+        if min(tw, th) < 16 or tw > src.shape[1] or th > src.shape[0]:
+            continue
+        template = cv2.resize(suspect, (tw, th), interpolation=cv2.INTER_AREA)
+        if float(template.std()) < 1.0:
+            continue
+        response = cv2.matchTemplate(src, template, cv2.TM_CCOEFF_NORMED)
+        _, metric, _, location = cv2.minMaxLoc(response)
+        if np.isfinite(metric) and metric > best:
+            best, best_scale = min(1.0, metric), scale
+            best_template, best_location = template, location
 
     out["metric"] = round(best, 3)
     edge_metric = 0.0
