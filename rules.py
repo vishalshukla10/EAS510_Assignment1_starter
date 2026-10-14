@@ -1,5 +1,5 @@
 """EAS 510 - Project 1: Rule functions for the Digital Forensics Apprentice.
-
+ 
 Each rule compares one suspect image against one registered original and
 returns a dict:
 
