@@ -90,14 +90,20 @@ Apache 2.0. See `LICENSE`.
 ## Observed weakness in V1: what failed and why
 
 I changed the metadata trigger and template trigger to 0.55 and 0.20 respectively. As it allowed weaker evidence to contribute points but on the other hand the problem remained the same. They didn't fix the problem of comparing cropped images at different scales. 
-In few cases, One of the rule showed strong evidence of the matched image but was discarded cause it wasn't picked up by other rules. The insufficient support from other rules caused it to fail. 
+In few cases, One of the rule showed strong evidence of the matched image but was discarded cause it wasn't picked up by other rules. The insufficient support from other rules caused it to fail. For example, one of the image had 27 points for match in histogram but was discarded cause the match threshold is 50, while the other metadata and template gave 0.  
 
 
 ## Design decision for V2: what Rule 4 is and why you chose it
 
+Rule 4 addressed multiscale template matching with edge comparision as v1 faced challenges with compression and brightness. I chose multiscale matching because it searches for different sizes within the original. The rule 4 required mutiscale correlation and edge pattern correlation of atleast 0.80 and 0.30, respectively. 
 
+I changed the triggers for the three rules retained from rules.py, namely metadata, histogram and template matching to 15, 30 and 25, respectively and 30 for rule 4. As rule 4 doesnt have the sufficient points to trigger the threshold of 50, it needs evidence from the 3 rules too. 
 
 ## Effect of the change: accuracy before/after on easy vs hard
 
+My changed v1 gives the accuracy of 60% while v2 give the accuracy of 83.3% on easy images. On hard images accuracy increased from 55% to 82% approximately. 
+
 ## Trade-offs: what new costs or risks did Rule 4 introduce
+
+The trade-off is that the point budget system has changed. The evidence given by first 3 rules have been lowered and now contribute less to matching the images.For example, There could be a case where the metadata gives the evidence and the rule 4 doesn't, but the metadata wont be able to match the threshold alone.
 
